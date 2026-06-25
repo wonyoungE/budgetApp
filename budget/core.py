@@ -16,9 +16,16 @@ def get_balance(transactions: list[dict[str, Any]]) -> int:
     return sum(transaction["amount"] for transaction in transactions)
 
 
-def filter_by_category() -> None:
+def filter_by_category(
+    transactions: list[dict[str, Any]],
+    category: str,
+) -> list[dict[str, Any]]:
     """Filter transactions by category."""
-    pass
+    return [
+        transaction
+        for transaction in transactions
+        if transaction["category"].lower() == category.lower()
+    ]
 
 
 def load_transactions_from_csv() -> None:
