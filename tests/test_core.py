@@ -5,6 +5,7 @@ from budget.core import (
     filter_by_category,
     get_balance,
     load_transactions_from_csv,
+    monthly_summary,
 )
 from pathlib import Path
 
@@ -239,3 +240,54 @@ def test_load_transactions_from_csv_reads_step1_data() -> None:
     assert isinstance(transactions[0]["amount"], int)
     assert transactions[1]["amount"] == 3500000
     assert transactions[-1]["memo"] == "중고마켓"
+
+
+def test_monthly_summary_groups_income_expense_and_net() -> None:
+    """Monthly summary should aggregate by YYYY-MM using real CSV-like data."""
+    transactions = [
+        {
+            "date": "2025-01-02",
+            "type": "지출",
+            "category": "저축/투자",
+            "description": "펀드 투자",
+            "amount": -542738,
+            "memo": "",
+        },
+        {
+            "date": "2025-01-04",
+            "type": "수입",
+            "category": "기타수입",
+            "description": "환급금",
+            "amount": 405037,
+            "memo": "메모_53",
+        },
+        {
+            "date": "2025-01-10",
+            "type": "지출",
+            "category": "식비",
+            "description": "점심식사",
+            "amount": -48870,
+            "memo": "현금",
+        },
+        {
+            "date": "2025-02-01",
+            "type": "수입",
+            "category": "급여",
+            "description": "월급",
+            "amount": 3000000,
+            "memo": "",
+        },
+    ]
+
+    assert monthly_summary(transactions) == {
+        "2025-01": {
+            "income": 405037,
+            "expense": -591608,
+            "net": -186571,
+        },
+        "2025-02": {
+            "income": 3000000,
+            "expense": 0,
+            "net": 3000000,
+        },
+    }
