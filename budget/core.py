@@ -1,5 +1,7 @@
 """Core functions for the budget CLI app."""
 
+from csv import DictReader
+from pathlib import Path
 from typing import Any
 
 
@@ -28,9 +30,23 @@ def filter_by_category(
     ]
 
 
-def load_transactions_from_csv() -> None:
+def load_transactions_from_csv(file_path: str) -> list[dict[str, Any]]:
     """Load transactions from a CSV file."""
-    pass
+    path = Path(file_path)
+
+    with path.open("r", encoding="utf-8-sig", newline="") as file:
+        reader = DictReader(file)
+        return [
+            {
+                "date": row["date"],
+                "type": row["type"],
+                "category": row["category"],
+                "description": row["description"],
+                "amount": int(row["amount"]),
+                "memo": row["memo"],
+            }
+            for row in reader
+        ]
 
 
 def monthly_summary() -> None:
