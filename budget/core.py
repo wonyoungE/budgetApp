@@ -11,9 +11,9 @@ def add_transaction(
     return transactions + [transaction]
 
 
-def get_balance() -> None:
+def get_balance(transactions: list[dict[str, Any]]) -> int:
     """Return the current balance."""
-    pass
+    return sum(transaction["amount"] for transaction in transactions)
 
 
 def filter_by_category() -> None:
